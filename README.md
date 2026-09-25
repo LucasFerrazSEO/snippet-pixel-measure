@@ -1,43 +1,71 @@
-# snippet-pixel-measure — ferramenta grátis e de código aberto para medir título e meta em pixels
+**English** · [Português (Brasil)](README.pt-BR.md)
 
-`snippet-pixel-measure` é uma ferramenta gratuita e de código aberto que
-estima a largura em pixels de um título e de uma meta description, porque
-o Google corta o snippet por pixel renderizado, não por número de
-caracteres. Um título cheio de "W" maiúsculo estoura bem antes de chegar
-em 60 caracteres; um título só de letras estreitas cabe bem além disso.
+# snippet-pixel-measure
 
-## Por que medir em pixels, não em caracteres
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE) ![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)
 
-A regra "título até 55-60 caracteres" é uma aproximação grosseira. Duas
-frases com o mesmo número de caracteres podem ocupar larguras bem
-diferentes na tela, dependendo de quais letras usam. `snippet-pixel-measure`
-estima o espaço real que o texto ocuparia, para você saber se um título
-"tecnicamente dentro do limite de caracteres" já está, na prática, sendo
-cortado.
+`snippet-pixel-measure` is a free, open source command-line tool that
+estimates the pixel width of a title and a meta description, because
+Google truncates snippets by rendered pixels, not by character count. A
+title full of capital "W" overflows well before 60 characters; a title of
+narrow letters only fits well beyond that. It runs locally with the Python
+standard library only.
 
-## Como usar, passo a passo
+## Contents
 
-**1. Instale.** Só biblioteca padrão do Python (3.9 ou mais recente), sem
-dependência externa:
+- [Background](#background)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [FAQ](#faq)
+- [Limitations](#limitations)
+- [Contributing](#contributing)
+- [Author](#author)
+- [License](#license)
+
+## Background
+
+The "title up to 55 to 60 characters" rule is a rough approximation. Two
+phrases with the same number of characters can take up very different
+widths on screen, depending on which letters they use.
+`snippet-pixel-measure` estimates the actual space the text would take, so
+you know whether a title that is "technically within the character limit"
+is in practice already being cut.
+
+## Requirements
+
+Python 3.9 or newer. Standard library only, no external dependencies.
+
+## Installation
 
 ```bash
-git clone https://github.com/lucasferrazseo/snippet-pixel-measure.git
+git clone https://github.com/LucasFerrazSEO/snippet-pixel-measure.git
 cd snippet-pixel-measure
 ```
 
-**2. Meça um título.**
+## Usage
+
+The tool prints its report in Brazilian Portuguese.
+
+**1. Measure a title.**
 
 ```bash
 python snippet_pixel_measure.py --titulo "Consultoria de SEO em Belo Horizonte com Especialista em GEO e IA"
 ```
 
-**3. Meça uma meta description.**
+**2. Measure a meta description.**
 
 ```bash
 python snippet_pixel_measure.py --meta "Agência de SEO em BH com mais de 19 anos de experiência ajudando empresas a aparecerem no Google e nas IAs."
 ```
 
-**4. Meça os dois de uma vez.** Exemplo real de saída:
+**3. Measure both at once.**
+
+```bash
+python snippet_pixel_measure.py --titulo "Consultoria de SEO em Belo Horizonte com Especialista em GEO e IA" --meta "Agência de SEO em BH com mais de 19 anos de experiência ajudando empresas a aparecerem no Google e nas IAs."
+```
+
+Real sample output:
 
 ```
 === snippet-pixel-measure (desktop) ===
@@ -48,45 +76,48 @@ Meta description: 107 caracteres | ~744px estimado de ~920px (81%) | dentro do l
 (Estimativa heurística — ver Limitações no README antes de tratar como valor exato.)
 ```
 
-**5. Use os limites de mobile**, que costumam ser mais estreitos que
-desktop:
+**4. Use the mobile limits**, which are usually narrower than desktop:
 
 ```bash
 python snippet_pixel_measure.py --titulo "..." --meta "..." --mobile
 ```
 
-## Perguntas frequentes
+## FAQ
 
-**snippet-pixel-measure é realmente grátis?**
-Sim, código aberto sob licença MIT.
+**Is snippet-pixel-measure really free?**
+Yes. It is open source under the MIT license.
 
-**Isso é a medida exata que o Google usa?**
-Não, e nenhuma ferramenta pública tem acesso a isso — ver Limitações
-abaixo. É uma aproximação, útil para comparar dois títulos entre si, não
-para prever o corte exato pixel a pixel.
+**Is this the exact measurement Google uses?**
+No, and no public tool has access to that (see Limitations below). It is
+an approximation, useful for comparing two titles with each other, not for
+predicting the exact cut pixel by pixel.
 
-**Onde consigo confirmar visualmente o corte de verdade?**
-No resultado renderizado de fato na busca. A ferramenta é um checkpoint
-rápido antes de publicar, não substitui olhar a SERP real.
+**Where can I visually confirm the real cut?**
+In the actual rendered search result. The tool is a quick checkpoint
+before publishing and does not replace looking at the real SERP.
 
-## Limitações — leia antes de usar
+## Limitations
 
-A tabela de largura é uma **aproximação heurística** de fonte sans-serif
-proporcional, não a métrica exata do Arial nem de qualquer fonte que o
-Google use hoje — isso muda sem aviso e varia por idioma e dispositivo. Os
-limites de referência (~600px de título em desktop, ~920px de meta)
-também são aproximações amplamente citadas por ferramentas de simulação
-de SERP, não valores garantidos ou documentados oficialmente pelo Google.
+Read this before using the tool. The width table is a **heuristic
+approximation** of a proportional sans-serif font, not the exact metrics
+of Arial or of any font Google uses today. That changes without notice and
+varies by language and device. The reference limits (~600px for desktop
+titles, ~920px for meta descriptions) are also approximations widely cited
+by SERP simulation tools, not values guaranteed or officially documented
+by Google.
 
-Trate o resultado como sinal de ordem de grandeza ("este título está bem
-longo, provavelmente corta"), nunca como previsão exata de onde o corte
-cai.
+Treat the result as an order-of-magnitude signal ("this title is quite
+long, it will probably be cut"), never as an exact prediction of where the
+cut falls.
 
-## Autor
+## Contributing
 
-[Lucas Ferraz](https://lucasferraz.com) — especialista em SEO, criação de
-sites e SEO para IA, fundador da [Lucas Ferraz SEO](https://lucasferrazseo.com).
+Bug reports and suggestions are welcome through [GitHub Issues](https://github.com/LucasFerrazSEO/snippet-pixel-measure/issues).
 
-## Licença
+## Author
 
-MIT — ver [LICENSE](LICENSE).
+[Lucas Ferraz](https://lucasferraz.com) is an SEO, website development and Generative Engine Optimization specialist and the founder of [Lucas Ferraz SEO](https://lucasferrazseo.com).
+
+## License
+
+MIT. See [LICENSE](LICENSE).
