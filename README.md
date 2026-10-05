@@ -32,6 +32,12 @@ widths on screen, depending on which letters they use.
 you know whether a title that is "technically within the character limit"
 is in practice already being cut.
 
+The estimate sums the advance width of each character in Arial and scales
+it by the font size of each snippet element: 20px for the title and 14px
+for the meta description. The widths come from the public Helvetica
+metrics (Adobe Core 14 AFM, in 1/1000 em units), which Arial matches
+character by character.
+
 ## Requirements
 
 Python 3.9 or newer. Standard library only, no external dependencies.
@@ -70,10 +76,10 @@ Real sample output:
 ```
 === snippet-pixel-measure (desktop) ===
 
-Título: 65 caracteres | ~454px estimado de ~600px (76%) | dentro do limite
-Meta description: 107 caracteres | ~744px estimado de ~920px (81%) | dentro do limite
+Título: 65 caracteres | ~627px em Arial 20px de ~600px (104%) | PROVAVELMENTE CORTA
+Meta description: 107 caracteres | ~734px em Arial 14px de ~920px (80%) | dentro do limite
 
-(Estimativa heurística — ver Limitações no README antes de tratar como valor exato.)
+(Estimativa por métricas do Arial; ver Limitações no README antes de tratar como valor exato.)
 ```
 
 **4. Use the mobile limits**, which are usually narrower than desktop:
@@ -88,9 +94,10 @@ python snippet_pixel_measure.py --titulo "..." --meta "..." --mobile
 Yes. It is open source under the MIT license.
 
 **Is this the exact measurement Google uses?**
-No, and no public tool has access to that (see Limitations below). It is
-an approximation, useful for comparing two titles with each other, not for
-predicting the exact cut pixel by pixel.
+No, and no public tool has access to that (see Limitations below). It
+uses Arial metrics at the font sizes Google commonly renders, so it lands
+close to the browser width, but it does not predict the exact cut pixel by
+pixel.
 
 **Where can I visually confirm the real cut?**
 In the actual rendered search result. The tool is a quick checkpoint
@@ -98,17 +105,32 @@ before publishing and does not replace looking at the real SERP.
 
 ## Limitations
 
-Read this before using the tool. The width table is a **heuristic
-approximation** of a proportional sans-serif font, not the exact metrics
-of Arial or of any font Google uses today. That changes without notice and
-varies by language and device. The reference limits (~600px for desktop
-titles, ~920px for meta descriptions) are also approximations widely cited
-by SERP simulation tools, not values guaranteed or officially documented
-by Google.
+Read this before using the tool.
 
-Treat the result as an order-of-magnitude signal ("this title is quite
-long, it will probably be cut"), never as an exact prediction of where the
-cut falls.
+- **Font and size are an assumption.** The tool assumes Google renders the
+  title in Arial 20px and the meta description in Arial 14px. Google can
+  change font, size and layout without notice, and the rendering varies by
+  device, language and browser.
+- **Metrics, not rendering.** Widths come from the public Helvetica AFM
+  table, which Arial matches. The tool ignores kerning and the browser's
+  subpixel rounding. Brazilian Portuguese accented letters are measured as
+  their base letter, except accented "i", which is wider in Arial.
+- **Characters outside the table** (arrows, emoji, non-Latin scripts) get a
+  fallback width (1 em for symbols, 0.556 em for the rest), because the
+  browser draws them with another font. Results for those are rougher.
+- **Checked against real measurements.** On 2026-10-05, four titles and
+  meta descriptions in Brazilian Portuguese were measured with canvas
+  `measureText` in Arial. The tool stayed within 3% of all four (the test
+  file uses that tolerance). That is a small sample, not a guarantee for
+  every text.
+- **The limits are approximations.** ~600px for desktop titles and ~920px
+  for desktop meta descriptions (680px on mobile) are widely cited by SERP
+  simulation tools, not values documented by Google.
+
+Treat the result as an estimate close to the browser width, useful for
+deciding whether a title or description is at risk of being cut, not as
+the exact pixel where the cut falls. Run the tests with
+`python -m unittest test_snippet_pixel_measure`.
 
 ## Contributing
 

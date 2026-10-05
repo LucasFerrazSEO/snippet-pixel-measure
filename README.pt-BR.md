@@ -32,6 +32,12 @@ diferentes na tela, dependendo de quais letras usam.
 você saber se um título "tecnicamente dentro do limite de caracteres" já
 está, na prática, sendo cortado.
 
+A estimativa soma a largura de avanço de cada caractere em Arial e escala
+pelo tamanho de fonte de cada elemento do snippet: 20px no título e 14px
+na meta description. As larguras vêm das métricas públicas do Helvetica
+(AFM do Adobe Core 14, em unidades de 1/1000 do em), que o Arial reproduz
+caractere a caractere.
+
 ## Requisitos
 
 Python 3.9 ou mais recente. Só biblioteca padrão, sem dependência externa.
@@ -68,10 +74,10 @@ Exemplo real de saída:
 ```
 === snippet-pixel-measure (desktop) ===
 
-Título: 65 caracteres | ~454px estimado de ~600px (76%) | dentro do limite
-Meta description: 107 caracteres | ~744px estimado de ~920px (81%) | dentro do limite
+Título: 65 caracteres | ~627px em Arial 20px de ~600px (104%) | PROVAVELMENTE CORTA
+Meta description: 107 caracteres | ~734px em Arial 14px de ~920px (80%) | dentro do limite
 
-(Estimativa heurística — ver Limitações no README antes de tratar como valor exato.)
+(Estimativa por métricas do Arial; ver Limitações no README antes de tratar como valor exato.)
 ```
 
 **4. Use os limites de mobile**, que costumam ser mais estreitos que
@@ -88,8 +94,9 @@ Sim, código aberto sob licença MIT.
 
 **Isso é a medida exata que o Google usa?**
 Não, e nenhuma ferramenta pública tem acesso a isso (veja Limitações
-abaixo). É uma aproximação, útil para comparar dois títulos entre si, não
-para prever o corte exato pixel a pixel.
+abaixo). Ela usa as métricas do Arial nos tamanhos de fonte que o Google
+costuma renderizar, então chega perto da largura no navegador, mas não
+prevê o corte exato pixel a pixel.
 
 **Onde consigo confirmar visualmente o corte de verdade?**
 No resultado renderizado de fato na busca. A ferramenta é um checkpoint
@@ -97,17 +104,34 @@ rápido antes de publicar, não substitui olhar a SERP real.
 
 ## Limitações
 
-Leia antes de usar. A tabela de largura é uma **aproximação heurística**
-de fonte sans-serif proporcional, não a métrica exata do Arial nem de
-qualquer fonte que o Google use hoje. Isso muda sem aviso e varia por
-idioma e dispositivo. Os limites de referência (~600px de título em
-desktop, ~920px de meta) também são aproximações amplamente citadas por
-ferramentas de simulação de SERP, não valores garantidos ou documentados
-oficialmente pelo Google.
+Leia antes de usar.
 
-Trate o resultado como sinal de ordem de grandeza ("este título está bem
-longo, provavelmente corta"), nunca como previsão exata de onde o corte
-cai.
+- **Fonte e tamanho são uma premissa.** A ferramenta supõe que o Google
+  renderiza o título em Arial 20px e a meta description em Arial 14px. O
+  Google pode trocar fonte, tamanho e layout sem aviso, e a renderização
+  varia por dispositivo, idioma e navegador.
+- **Métrica, não renderização.** As larguras vêm da tabela AFM pública do
+  Helvetica, que o Arial reproduz. A ferramenta ignora kerning e o
+  arredondamento de subpixel do navegador. Letra acentuada do português é
+  medida como a letra base, com exceção do "i" acentuado, que no Arial é
+  mais largo.
+- **Caractere fora da tabela** (seta, emoji, alfabeto não latino) entra com
+  largura de reserva (1 em para símbolo, 0,556 em para o resto), porque o
+  navegador o desenha com outra fonte. Nesses casos a estimativa é mais
+  grosseira.
+- **Conferida contra medição real.** Em 2026-10-05, quatro títulos e meta
+  descriptions em português foram medidos com `measureText` de canvas em
+  Arial. A ferramenta ficou a menos de 3% dos quatro (o arquivo de testes
+  usa essa tolerância). É uma amostra pequena, não garantia para todo
+  texto.
+- **Os limites são aproximações.** ~600px de título em desktop e ~920px de
+  meta em desktop (680px no celular) são valores amplamente citados por
+  ferramentas de simulação de SERP, não documentados pelo Google.
+
+Trate o resultado como estimativa próxima da largura no navegador, útil
+para decidir se um título ou uma descrição corre risco de corte, não como
+o pixel exato onde o corte cai. Os testes rodam com
+`python -m unittest test_snippet_pixel_measure`.
 
 ## Como contribuir
 
